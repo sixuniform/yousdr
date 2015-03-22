@@ -1,0 +1,59 @@
+<icecast>
+    <admin>your-email@your-domain.top</admin>
+    <location>SDR Location?</location>
+    <server>icecast</server>
+
+    <limits>
+        <clients>100</clients>
+        <sources>3</sources>
+        <queue-size>524288</queue-size>
+        <client-timeout>20</client-timeout>
+        <header-timeout>10</header-timeout>
+        <source-timeout>3</source-timeout>
+        <burst-on-connect>1</burst-on-connect>
+        <burst-size>8192</burst-size>
+    </limits>
+
+    <authentication>
+        <source-password>sdricecastpassword</source-password>
+        <relay-password>sdricecastpassword</relay-password>
+
+        <!-- Admin logs in with the username given below -->
+        <admin-user>sdradmin</admin-user>
+        <admin-password>sdradminpass</admin-password>
+    </authentication>
+
+    <hostname>your-host-name.top</hostname>
+
+    <listen-socket>
+        <port>9000</port>
+    </listen-socket>
+
+    <fileserve>0</fileserve>
+
+<paths>
+    <basedir>/</basedir>
+    <logdir>/dev</logdir>
+    <pidfile>/tmp/icecast.pid</pidfile>
+    <webroot>./web</webroot>
+    <adminroot>./admin</adminroot>
+</paths>
+
+   <logging>
+     <loglevel>0</loglevel> <!-- 4 Debug, 3 Info, 2 Warn, 1 Error -->
+     <accesslog>null</accesslog>
+     <errorlog>null</errorlog>
+   </logging>
+
+    <security>
+        <chroot>0</chroot>
+        <changeowner>
+            <user>nobody</user>
+            <group>nogroup</group>
+        </changeowner>
+    </security>
+ 	
+
+</icecast>
+
+

@@ -3,7 +3,7 @@ YOUSDR v0.1 Alpha - RTL-SDR webinterface with installation instructions for Rasp
 This is a web-wrapper for the rtl-sdr softwares.
 Currently it commands rtl_fm, rtl_tcp and dump1090
 
-The method of using system() to run commands is quite unclean so this is ery much work in progress.
+The method of using system() to run commands is quite unclean so this is very much work in progress.
 Please feel free to provide improvements!
 
 If you are reading this on GITHub, to install on your Raspbian system, clone this directory to /var/www/yousdr, .i.e:
@@ -40,22 +40,18 @@ apt-get install icecast2   			# Answer "No" if icecast asks you to configure it.
 apt-get install screen    			# Optional, but great for command-line multitasking
 ```
 
-Unfortunately, darkice doesn't come with ALSA support. Probably an outdated package. To fix this, you can either install the included "contrib/darkice_1.0-1_armhf.deb" by running:
+Unfortunately, darkice doesn't come with ALSA support. Probably an outdated package. To fix this, you can either install the included "contrib/darkice_1.0-999~mp3+1_armhf.deb" by running:
 
 ```
 cd /var/www/yousdr
-dpkg -i contrib/darkice_1.0-1_armhf.deb
+dpkg -i contrib//darkice_1.0-999~mp3+1_armhf.deb
 ```
 
 Or, you can follow these instructions to compile your own version:
-```
-http://mattkaar.com/blog/2013/05/26/web-streaming-with-the-raspberry-pi-baby-monitor/
-```
+[darkice instructions](http://mattkaar.com/blog/2013/05/26/web-streaming-with-the-raspberry-pi-baby-monitor/)
 
 Install RTL-SDR and DUMP1090. There's excellent information on that here, you can jump down to point "8." and start there:
-```
-http://www.satsignal.eu/raspberry-pi/dump1090.html#RTL
-```
+[dump1090 instructions](http://www.satsignal.eu/raspberry-pi/dump1090.html#RTL)
 
 After making dump1090 you need to install it manually. Stay in the directory after "make" completes, and run: 
 ```

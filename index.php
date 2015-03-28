@@ -2,7 +2,7 @@
 
 // PPM Correction. Hardcoded for now.
 // $ppm     = intval(29);
-$ppm     = intval(27);
+$ppm     = intval(26);
 
 
 // Current User set via cookies.
@@ -77,7 +77,7 @@ case "listen":
  // Check for requested changes. 
  // If Receiver Mode is changed, rely on database settings.
 
- if ( $_POST && !$_POST['rxmode'] )  {
+ if ( $_POST && @!$_POST['rxmode'] )  {
   if ( isset($_POST['freq']) )   $freq   = str_replace(",",".",$_POST['freq']);   // Needs to be EXEC/SYSTEM safe. Fix !!!
   if ( isset($_POST['sql']) )    $sql    = intval($_POST['sql']);
   if ( isset($_POST['bw']) )     $bw     = intval($_POST['bw']);
@@ -110,7 +110,7 @@ case "listen":
  </td></tr>
  <tr><td>Bandwidth</td><td><input name="bw" value="'.$bw.'" size="10"> Hz</td></tr>
 
- <tr><td>Squelch</td><td><input type="range" min=0 max=120 name="sql" value="'.$sql.'"></td></tr>
+ <tr><td>Squelch</td><td><input type="range" min=0 max=175 name="sql" value="'.$sql.'"></td></tr>
 
  <!-- <tr><td>Squelch</td><td><input name="sql" value="'.$sql.'"></td></tr> -->
  <tr><td>Option</td><td>

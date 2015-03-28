@@ -55,7 +55,7 @@ Install RTL-SDR and DUMP1090. There's excellent information on that here, you ca
 
 After making dump1090 you need to install it manually. Stay in the directory after "make" completes, and run: 
 ```
-cp -r public_html/ /var/www/
+cp -r public_html/ /var/www/yousdr
 cp dump1090 /usr/local/bin/
 ```
 

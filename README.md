@@ -40,7 +40,14 @@ apt-get install icecast2   			# Answer "No" if icecast asks you to configure it.
 apt-get install screen    			# Optional, but great for command-line multitasking
 ```
 
-Unfortunately, darkice doesn't come with ALSA support. Probably an outdated package. To fix this, you can follow these instructions to compile your own:
+Unfortunately, darkice doesn't come with ALSA support. Probably an outdated package. To fix this, you can either install the included "contrib/darkice_1.0-1_armhf.deb" by running:
+
+```
+cd /var/www/yousdr
+dpkg -i contrib/darkice_1.0-1_armhf.deb
+```
+
+Or, you can follow these instructions to compile your own version:
 ```
 http://mattkaar.com/blog/2013/05/26/web-streaming-with-the-raspberry-pi-baby-monitor/
 ```

@@ -18,12 +18,17 @@ $BIN_APLAY    = "/usr/bin/aplay";
 // Path to directory containing "public_html" for dump1090.
 
 $HTML_DUMP1090 = "/var/www/yousdr/";
+$URL_DUMP1090  = "http://".$_SERVER['SERVER_NAME'].":8080";		// You need to change this if you are behing NAT and use port-forwarding!
+
 
 // ICECAST details.
 $ICECAST_HOST   = "localhost:9000";
 $ICECAST_MOUNT  = "sdr";
 $ICECAST_USER   = "sdradmin";
 $ICECAST_PASS   = "sdradminpass";
+$ICECAST_URL    = "http://".$_SERVER['SERVER_NAME'].":9000";		// You need to change this if you are behing NAT and use port-forwarding!
+
+
 
 // More or less static stuff defined below.
 
@@ -55,7 +60,7 @@ $rxmodes   = array(
 );
 
 $bw_hz  = array(
- "fm"   =>   "8000",
+ "fm"   =>  "10000",
  "wbfm" => "200000",
  "am"   =>  "16000",
  "usb"  =>   "4000",

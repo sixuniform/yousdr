@@ -44,7 +44,7 @@ Unfortunately, darkice doesn't come with ALSA support. Probably an outdated pack
 
 ```
 cd /var/www/yousdr
-dpkg -i contrib//darkice_1.0-999~mp3+1_armhf.deb
+dpkg -i contrib/darkice_1.0-999~mp3+1_armhf.deb
 ```
 
 Or, you can follow these instructions to compile your own version:

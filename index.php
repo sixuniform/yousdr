@@ -126,13 +126,13 @@ case "listen":
  <tr><td><input type="submit" value="Set data"></td><td><a href="./?kill=yes">Kill Stream (quit)</a></td></tr>
  </form>
 
- <tr><td colspan=2><br>Stream URL: <a target="_blank" href=""></a> ['.$il['icestats']['source']['Listeners'].']</td></td>
+ <tr><td colspan=2><br>Stream URL: <a target="_blank" href="'.$ICECAST_URL.'/'.$ICECAST_MOUNT.'">'.$ICECAST_URL.'/'.$ICECAST_MOUNT.'</a> ['.$il['icestats']['source']['Listeners'].']</td></td>
 ';
 
 break;
 
 case "ads-b":
- echo '<tr><td colspan=2><br>ADS-B Map URL: <a target="_blank" href="...">...</a></td></td>';
+ echo '<tr><td colspan=2><br>ADS-B Map URL: <a target="_blank" href="'.$URL_DUMP1090.'">'.$URL_DUMP1090.'</a></td></td>';
 break;
 
 case "rtl_tcp":

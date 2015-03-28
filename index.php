@@ -39,52 +39,23 @@ echo '<html>
 <table>
 ';
 
-$modes   = array(
- "fm"   => "FM (narrow)", 
- "wbfm" => "FM (wide)", 
- "am" => "AM",
- "usb" => "USB",
- "lsb" => "LSB",
- "cw" => "CW"
-);
+mysql_connect($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASS) or die("DBConnect:".mysql_error());
+mysql_select_db($MYSQL_DB) or die("DBSelect:".mysql_error());
 
-$filters = array(
- ""       => "None",
- "edge "  => "Edge Tuning", 
- "dc"     => "DC Blocking Filter", 
- "deemp"  => "De-Emphasis Filter",
- "direct" => "Direct Sampling", 
- "offset" => "Offset tuning"
-);
-
-$rxmodes = array(
- "listen"  => "RTL-FM Listen/Scan Mode", 
- "ads-b"   => "ADS-B Flight Mode", 
- "rtl_tcp" => "RTL-TCP Wideband SDR Mode",
- "off" => "OFF - Stop all streaming"
-);
-
-$bw_hz = array(
- "fm"   =>   "8000",
- "wbfm" => "200000",
- "am"   =>  "16000",
- "usb"  =>   "4000",
- "lsb"  =>   "4000", 
- "cw"   =>   "4000"
-);
-
-
-mysql_connect($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASS) or die(mysql_query());
-mysql_select_db($MYSQL_DB);
 
 // Get current rxmode from database
-$result_rxm = mysql_query("SELECT rxmode FROM actions ORDER BY id DESC LIMIT 1");
-$cur_rxm    = mysql_fetch_row($result_rxm);
-$rxmode     = $cur_rxm[0];
+$result_rxm = mysql_query("SELECT rxmode FROM actions ORDER BY id DESC LIMIT 1") or die(mysql_error());
+if ( mysql_num_rows($result_rxm) ) {
+ $cur_rxm    = mysql_fetch_row($result_rxm);
+ $rxmode     = $cur_rxm[0];
+} else
+ $rxmode     = "listen";
+
 
 // See if user changed mode and switch if it is correct..
 if ( isset($_GET['rxmode']) && isset($rxmodes[$_POST['rxmode']]) )
  $rxmode = $_POST['rxmode'];
+
 
 switch($rxmode) {
 
@@ -155,13 +126,13 @@ case "listen":
  <tr><td><input type="submit" value="Set data"></td><td><a href="./?kill=yes">Kill Stream (quit)</a></td></tr>
  </form>
 
- <tr><td colspan=2><br>Stream URL: <a target="_blank" href="http://sm6.se:9000/jo57wq">http://sm6.se:9000/jo57wq</a> ['.$il['icestats']['source']['Listeners'].']</td></td>
+ <tr><td colspan=2><br>Stream URL: <a target="_blank" href=""></a> ['.$il['icestats']['source']['Listeners'].']</td></td>
 ';
 
 break;
 
 case "ads-b":
- echo '<tr><td colspan=2><br>ADS-B Map URL: <a target="_blank" href="http://sm6.se:82/">http://sm6.se:82</a></td></td>';
+ echo '<tr><td colspan=2><br>ADS-B Map URL: <a target="_blank" href="...">...</a></td></td>';
 break;
 
 case "rtl_tcp":
@@ -188,8 +159,8 @@ echo '
 
 // Fix bandwidths. APLAY doesn't seem to handle less than 4000 Hz :-(
 
-if ( $bw > 96000 ) $audiobw = "96000"; else
-if ( $bw < 4000  ) $bw      = "4000"; else
+if ( @$bw > 96000 ) $audiobw = "96000"; else
+if ( @$bw < 4000  ) $bw      = "4000"; else
  $audiobw = $bw;
 
 // No changes to be made? Quit here.

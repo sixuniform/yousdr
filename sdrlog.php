@@ -1,11 +1,13 @@
 <?php
 
-$modes = array("fm" => "FM (narrow)", "wbfm" => "FM (wide)", "am" => "AM", "usb" => "USB", "lsb" => "LSB", "cw" => "CW");
-$filters = array("" => "None", "edge" => "Edge Tuning", "dc" => "DC Blocking Filter", "deemp" => "De-Emphasis Filter", "direct" => "Direct Sampling", "offset" => "Offset tuning");
-date_default_timezone_set("UTC");
+// Check CONFIG.PHP for configuration details!
+if ( !@include "./config.php" ) {
+ echo "config.php not found! Please copy (and edit) ./contrib/config.php to ./ !";
+ die();
+}
 
-mysql_connect("localhost", "sdr", "sDRjo57WQ") or die(mysql_query());
-mysql_select_db("sdr");
+mysql_connect($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASS) or die("DBConnect:".mysql_error());
+mysql_select_db($MYSQL_DB) or die("DBSelect:".mysql_error());
 
 $result = mysql_query("SELECT * FROM actions ORDER BY id DESC LIMIT 200");
 
@@ -18,7 +20,7 @@ $lastmode = $lastfreq = "";
 while ( $row=mysql_fetch_assoc($result) ) {
  if ( $maxtime < $row['time'] ) $maxtime = $row['time'];
  if ( $lastmode == $row['mode'] && $lastfreq == $row['freq'] ) continue;
- $output .= strftime("%H:%M",$row['time'])."z ".$row['user'].": ".$row['freq']." ".$modes[$row['mode']]."<br>";
+ $output .= strftime("%H:%M",$row['time'])."z ".$row['user'].": ".$row['freq']." ".@$modes[$row['mode']]."<br>";
  $lastfreq = $row['freq'];
  $lastmode = $row['mode'];
  $i--;
@@ -29,7 +31,7 @@ echo '<html>
 <head>
 <meta http-equiv="refresh" content="60;url=\'./sdrlog.php?lastaction='.$maxtime.'\'">';
 
-if ( $maxtime > $_GET['lastaction'] ) 
+if ( $maxtime > $_GET['lastaction'] )
 echo '<script type="text/javascript">
 window.parent.location.href = "./";
 // window.parent.location.href;

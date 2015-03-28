@@ -8,10 +8,14 @@ Please feel free to provide improvements!
 
 If you are reading this on GITHub, to install on your Raspbian system, clone this directory to /var/www/yousdr, .i.e:
 
+```
 cd /var/www
 git clone http://github.com/sixuniform/yousdr.git
+```
 
--- PREREQUISITES --
+------------ 
+PREREQUISITES 
+------------ 
 Install a fresh raspbian on your PI.
 If you run on a Raspberry PI B (512Mb) you should benefit from choosing overclock options of at least 950 MHz (arm_freq=950, core_freq=250, sdram_freq=450, over_voltage=6).
 Mine runs fine (gpu_mem=16,gpu_freq=100,avoid_pwm_pll=1,arm_freq=1000,sdram_freq=600,core_freq=400,over_voltage=6,over_voltage_sdram=3,force_turbo=0)
@@ -114,3 +118,6 @@ cp contrib/darkice.cfg /etc/darkice.cfg
 
 Edit "/etc/default/icecast2" and change "ENABLE=false" to "ENABLE=true"
 Edit "/etc/default/darkice" and change "RUN=no" to "RUN=yes"
+
+Good luck,
+ Rick - SM6U / SM6YOU

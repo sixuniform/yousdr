@@ -48,10 +48,10 @@ dpkg -i contrib//darkice_1.0-999~mp3+1_armhf.deb
 ```
 
 Or, you can follow these instructions to compile your own version:
-[darkice instructions](http://mattkaar.com/blog/2013/05/26/web-streaming-with-the-raspberry-pi-baby-monitor/)
+[](http://mattkaar.com/blog/2013/05/26/web-streaming-with-the-raspberry-pi-baby-monitor/)
 
 Install RTL-SDR and DUMP1090. There's excellent information on that here, you can jump down to point "8." and start there:
-[dump1090 instructions](http://www.satsignal.eu/raspberry-pi/dump1090.html#RTL)
+[](http://www.satsignal.eu/raspberry-pi/dump1090.html#RTL)
 
 After making dump1090 you need to install it manually. Stay in the directory after "make" completes, and run: 
 ```

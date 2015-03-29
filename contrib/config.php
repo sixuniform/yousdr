@@ -2,6 +2,9 @@
 
 /* Configuration details below! */
 
+
+$USE_SQL      = true;	// If you don't have SQL or doesn't want the program to have "memory", set to "false".
+
 // MySQL details
 $MYSQL_HOST   = "localhost";
 $MYSQL_USER   = "sdruser";

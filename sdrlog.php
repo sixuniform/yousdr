@@ -6,6 +6,11 @@ if ( !@include "./config.php" ) {
  die();
 }
 
+if ( !$USE_SQL ) {
+ echo "Action log disabled - SQL not enabled.";
+ die();
+}
+
 mysql_connect($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASS) or die("DBConnect:".mysql_error());
 mysql_select_db($MYSQL_DB) or die("DBSelect:".mysql_error());
 

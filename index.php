@@ -39,21 +39,22 @@ echo '<html>
 <table>
 ';
 
-mysql_connect($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASS) or die("DBConnect:".mysql_error());
-mysql_select_db($MYSQL_DB) or die("DBSelect:".mysql_error());
+if ( $USE_SQL ) {
+ mysql_connect($MYSQL_HOST, $MYSQL_USER, $MYSQL_PASS) or die("DBConnect:".mysql_error());
+ mysql_select_db($MYSQL_DB) or die("DBSelect:".mysql_error());
 
-
-// Get current rxmode from database
-$result_rxm = mysql_query("SELECT rxmode FROM actions ORDER BY id DESC LIMIT 1") or die(mysql_error());
-if ( mysql_num_rows($result_rxm) ) {
- $cur_rxm    = mysql_fetch_row($result_rxm);
- $rxmode     = $cur_rxm[0];
-} else
- $rxmode     = "listen";
+ // Get current rxmode from database
+ $result_rxm = mysql_query("SELECT rxmode FROM actions ORDER BY id DESC LIMIT 1") or die(mysql_error());
+ if ( mysql_num_rows($result_rxm) ) {
+  $cur_rxm    = mysql_fetch_row($result_rxm);
+  $rxmode     = $cur_rxm[0];
+ } else
+  $rxmode     = "listen";
+}
 
 
 // See if user changed mode and switch if it is correct..
-if ( isset($_GET['rxmode']) && isset($rxmodes[$_POST['rxmode']]) )
+if ( @isset($_GET['rxmode']) && @isset($rxmodes[$_POST['rxmode']]) )
  $rxmode = $_POST['rxmode'];
 
 
@@ -62,22 +63,24 @@ switch($rxmode) {
 case "listen":
 
  // Get latest actions and frequency data
- $result  = mysql_query("SELECT * FROM actions WHERE bw != 0 ORDER BY id DESC LIMIT 1");
+ if ( $USE_SQL ) {
+  $result  = mysql_query("SELECT * FROM actions WHERE bw != 0 ORDER BY id DESC LIMIT 1");
 
- $cur     = mysql_fetch_assoc($result);
+  $cur     = mysql_fetch_assoc($result);
 
- $freq    = $cur['freq'];
- $bw      = $cur['bw'];
- //$ppm    = $cur['ppm'];
- $sql     = $cur['squl'];
- $mode    = $cur['mode'];
- $autobw  = $cur['autobw'];
- $filter  = $cur['filter'];
+  $freq    = $cur['freq'];
+  $bw      = $cur['bw'];
+  //$ppm    = $cur['ppm'];
+  $sql     = $cur['squl'];
+  $mode    = $cur['mode'];
+  $autobw  = $cur['autobw'];
+  $filter  = $cur['filter'];
 
- // Check for requested changes. 
- // If Receiver Mode is changed, rely on database settings.
+  // Check for requested changes.
+  // If Receiver Mode is changed, rely on database settings.
+ }
 
- if ( $_POST && @!$_POST['rxmode'] )  {
+ if ( $_POST && isset($_POST['freq']) )  {
   if ( isset($_POST['freq']) )   $freq   = str_replace(",",".",$_POST['freq']);   // Needs to be EXEC/SYSTEM safe. Fix !!!
   if ( isset($_POST['sql']) )    $sql    = intval($_POST['sql']);
   if ( isset($_POST['bw']) )     $bw     = intval($_POST['bw']);
@@ -86,7 +89,7 @@ case "listen":
   if ( isset($_POST['filter']) && isset($filters[$_POST['filter']]) ) $filter = $_POST['filter'];
 
   if ( isset($_POST['mode'])   && isset($modes[$_POST['mode']]) ) {
-   if ( $autobw && $_POST['mode'] != $mode ) 
+   if ( $autobw && $_POST['mode'] != @$mode )
     $bw = $bw_hz[$_POST['mode']]; // Set auto-banwidth on mode change, if requested.
    $mode = $_POST['mode'];
   }
@@ -96,7 +99,7 @@ case "listen":
  include "xml2array.php";
  $il    = xml2array("http://".$ICECAST_USER.":".$ICECAST_PASS."@".$ICECAST_HOST."/admin/listclients?mount=/".$ICECAST_MOUNT);
 
- echo '<form name="sdrcontrol" action="./" method="POST" onSubmit="JavaScript:return callrequired();">
+ echo '<form name="sdrcontrol" action="./'.(!$USE_SQL ? '?rxmode=listen' : '').'" method="POST" onSubmit="JavaScript:return callrequired();">
  <tr><td>Frequency</td><td><input name="freq" value="'.$freq.'" size="15"> MHz</td></tr>
  <tr><td>Mode</td><td>
  <select name="mode">';
@@ -124,6 +127,7 @@ case "listen":
  </td></tr>
  <tr><td>User Callsign</td><td><input type="text" name="sdruser" value="'.@$_COOKIE['SDR_USER'].'"></td></tr>
  <tr><td><input type="submit" value="Set data"></td><td><a href="./?kill=yes">Kill Stream (quit)</a></td></tr>
+ '.(!$USE_SQL ? '<input type="hidden" name="rxmode" value="listen">' : '').'
  </form>
 
  <tr><td colspan=2><br>Stream URL: <a target="_blank" href="'.$ICECAST_URL.'/'.$ICECAST_MOUNT.'">'.$ICECAST_URL.'/'.$ICECAST_MOUNT.'</a> ['.$il['icestats']['source']['Listeners'].']</td></td>
@@ -164,7 +168,7 @@ if ( @$bw < 4000  ) $bw      = "4000"; else
  $audiobw = $bw;
 
 // No changes to be made? Quit here.
-if ( !$_POST ) die();	
+if ( !$_POST ) die();
 
 // Kill all existing programs that may hog the RTL-Chip.
 system("killall -9 ".$BIN_RTLFM." ".$BIN_DUMP1090." ".$BIN_RTLTCP);
@@ -174,12 +178,12 @@ switch($rxmode) {
 
 case "off":
  $crap  = file_get_contents("http://".$ICECAST_USER.":".$ICECAST_PASS."@".$ICECAST_HOST."/admin/metadata?mount=/".$ICECAST_MOUNT."&mode=updinfo&song=OFF");
- mysql_query("INSERT INTO actions SET user = '".@mysql_real_escape_string($_COOKIE['SDR_USER'])."', time = '".time()."', freq = 'Stream stopped.', rxmode = '".$rxmode."'") or die(mysql_error());
+ if ( $USE_SQL ) mysql_query("INSERT INTO actions SET user = '".@mysql_real_escape_string($_COOKIE['SDR_USER'])."', time = '".time()."', freq = 'Stream stopped.', rxmode = '".$rxmode."'") or die(mysql_error());
 break;
 
 
 case "listen":
- mysql_query("INSERT INTO actions SET user = '".@mysql_real_escape_string($_COOKIE['SDR_USER'])."', time = '".time()."', freq = '".mysql_real_escape_string($freq)."', squl = '".mysql_real_escape_string($sql)."', autobw = '".intval($autobw)."', mode = '".mysql_real_escape_string($mode)."', filter = '".mysql_real_escape_string($filter)."', bw = '".intval($bw)."', rxmode = '".$rxmode."'") or die(mysql_error());
+  if ( $USE_SQL ) mysql_query("INSERT INTO actions SET user = '".@mysql_real_escape_string($_COOKIE['SDR_USER'])."', time = '".time()."', freq = '".mysql_real_escape_string($freq)."', squl = '".mysql_real_escape_string($sql)."', autobw = '".intval($autobw)."', mode = '".mysql_real_escape_string($mode)."', filter = '".mysql_real_escape_string($filter)."', bw = '".intval($bw)."', rxmode = '".$rxmode."'") or die(mysql_error());
   if ( $sql ) $sql = "-l ".$sql; else $sql = "";
   if ( strlen($filter) ) $filter = escapeshellarg("-E ".$filter); else $filter = "";
  system("(".$BIN_RTLFM." '-F 9' ".escapeshellarg("-f ".$freq."M")." -M ".$mode." -s ".$bw." ".($audiobw != $bw ? "-r ".$audiobw : "")."  -p ".$ppm." ".$sql." ".$filter." -  | ".$BIN_APLAY." -r ".$audiobw." -f S16_LE -c 1 -t raw --buffer-size=0 -) > /dev/null 2>&1 &");
@@ -188,14 +192,14 @@ case "listen":
 break;
 
 case "ads-b":
- mysql_query("INSERT INTO actions SET user = '".@mysql_real_escape_string($_COOKIE['SDR_USER'])."', time = '".time()."', freq = 'ADS-B Flight RX', rxmode = '".$rxmode."'") or die(mysql_error());
+ if ( $USE_SQL ) mysql_query("INSERT INTO actions SET user = '".@mysql_real_escape_string($_COOKIE['SDR_USER'])."', time = '".time()."', freq = 'ADS-B Flight RX', rxmode = '".$rxmode."'") or die(mysql_error());
  system("(cd ".$HTML_DUMP1090." ; ".$BIN_DUMP1090." --ppm ".$ppm." --net --fix --phase-enhance --aggressive --metric --modeac --gain -10 --quiet) > /dev/null 2>&1 &");
  $title = "ADS-B Flight RX 1090 MHz (No Audio)";
  $crap  = file_get_contents("http://".$ICECAST_USER.":".$ICECAST_PASS."@".$ICECAST_HOST."/admin/metadata?mount=/".$ICECAST_MOUNT."&mode=updinfo&song=".urlencode($title));
 break;
 
 case "rtl_tcp":
- mysql_query("INSERT INTO actions SET user = '".@mysql_real_escape_string($_COOKIE['SDR_USER'])."', time = '".time()."', freq = 'RTL-TCP SDR', rxmode = '".$rxmode."'") or die(mysql_error());
+ if ( $USE_SQL ) mysql_query("INSERT INTO actions SET user = '".@mysql_real_escape_string($_COOKIE['SDR_USER'])."', time = '".time()."', freq = 'RTL-TCP SDR', rxmode = '".$rxmode."'") or die(mysql_error());
  system("(".$BIN_RTLTCP." -a 0.0.0.0 -P ".$ppm." )> /dev/null 2>&1 &");
  $title = "RTL-TCP Wideband (No Audio here)";
  $crap  = file_get_contents("http://".$ICECAST_USER.":".$ICECAST_PASS."@".$ICECAST_HOST."/admin/metadata?mount=/".$ICECAST_MOUNT."&mode=updinfo&song=".urlencode($title));
